@@ -1,165 +1,174 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { HERO_DATA } from '@/data/home';
-import { Arrow } from '@/components/ui/Arrow';
-import { GridMotion } from '@/components/ui/GridMotion';
+import { useEffect, useRef } from 'react';
+import { Fredoka } from 'next/font/google';
+
+const fredoka = Fredoka({ subsets: ['latin'], weight: ['700'] });
+
+const clamp = (n: number) => Math.max(-1, Math.min(1, n));
 
 export function Hero() {
   const heroRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
+    const hero = heroRef.current;
+    const logo = logoRef.current;
+    if (!hero || !logo) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    if (prefersReducedMotion) return;
+    // every element with data-depth drifts with the cursor (cheap, compositor-only)
+    const layers = Array.from(hero.querySelectorAll<HTMLElement>('[data-depth]'));
+    let tx = 0, ty = 0; // target (-1..1)
+    let cx = 0, cy = 0; // current, eased toward target
+    let raf = 0;
 
-    const ctx = gsap.context(() => {
-      // Entrance reveal for the hero text block
-      gsap.fromTo(
-        contentRef.current,
-        { opacity: 0, y: 25 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: 'power3.out',
-          delay: 0.15,
-        }
-      );
-    }, heroRef);
+    const tick = () => {
+      cx += (tx - cx) * 0.12;
+      cy += (ty - cy) * 0.12;
 
-    return () => ctx.revert();
+      logo.style.transform =
+        `perspective(1100px) rotateY(${cx * 26}deg) rotateX(${-cy * 20}deg) ` +
+        `scale(${1 + Math.hypot(cx, cy) * 0.035})`;
+
+      layers.forEach((el) => {
+        const d = Number(el.dataset.depth);
+        el.style.translate = `${cx * d}px ${cy * d}px`;
+      });
+
+      raf = Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001
+        ? requestAnimationFrame(tick)
+        : 0;
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+
+    // listen on the whole window so the logo reacts anywhere on the page
+    const onMove = (e: PointerEvent) => {
+      tx = clamp((e.clientX / window.innerWidth - 0.5) * 2);
+      ty = clamp((e.clientY / window.innerHeight - 0.5) * 2);
+      kick();
+    };
+    const onLeave = () => { tx = 0; ty = 0; kick(); };
+
+    window.addEventListener('pointermove', onMove, { passive: true });
+    document.documentElement.addEventListener('pointerleave', onLeave);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      document.documentElement.removeEventListener('pointerleave', onLeave);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
   return (
-    <section
-      ref={heroRef}
-      id="hero"
-      data-nav-theme="light"
-      className="relative min-h-screen lg:min-h-screen bg-white text-[#050505] pt-28 md:pt-36 pb-8 md:pb-12 flex flex-col justify-between overflow-hidden"
-      aria-label="FOB Media Introduction"
-    >
-      {/* Background Interactive 3D Image Grid Motion */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <GridMotion gradientColor="transparent" />
-      </div>
+    <section ref={heroRef} className="fob-hero">
+      <div className="fob-stage">
+        <p className="fob-side fob-l" data-depth="14">
+          A digital<br />growth studio<br />UAE — GCC
+          <hr />
+        </p>
+        <p className="fob-side fob-r" data-depth="14">
+          Websites<br />Marketing<br />Content<br />and more
+        </p>
 
-      {/* Editorial Scrim to preserve 100% white crispness on the left and smooth fade into cards */}
-      <div
-        className="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-r from-white via-white/95 via-35% md:via-40% to-transparent w-full md:w-[60%] lg:w-[48%]"
-        aria-hidden="true"
-      />
+        <svg className="fob-arrow fob-al" data-depth="24" viewBox="0 0 110 110" aria-hidden="true">
+          <path d="M8 6C4 52 30 88 98 98" />
+          <path d="M84 88l15 10-17 6" />
+        </svg>
+        <svg className="fob-arrow fob-ar" data-depth="24" viewBox="0 0 110 110" aria-hidden="true">
+          <path d="M102 6C106 52 80 88 12 98" />
+          <path d="M26 88 11 98l17 6" />
+        </svg>
+        <svg className="fob-spark" data-depth="-46" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12z" />
+        </svg>
 
-      {/* Top subtle fade to keep navbar crystal clear */}
-      <div
-        className="absolute top-0 left-0 right-0 h-28 z-[1] pointer-events-none bg-gradient-to-b from-white/90 via-white/40 to-transparent"
-        aria-hidden="true"
-      />
+        <span className="fob-pill fob-y" data-depth="-60">Brands</span>
+        <span className="fob-pill fob-w" data-depth="-48">Ideas</span>
 
-      {/* Main Content Container - Matches Reference Screenshot Layout */}
-      <div className="relative z-10 max-w-[1720px] w-full mx-auto px-6 sm:px-10 md:px-14 my-auto py-6 sm:py-8 lg:py-10">
-        <div ref={contentRef} className="max-w-xl xl:max-w-2xl flex flex-col items-start">
-          {/* Eyebrow Label with decorative dash line */}
-          <div className="flex items-center gap-3.5 mb-4 sm:mb-6">
-            <span className="font-mono text-[11px] sm:text-xs font-semibold tracking-[0.3em] uppercase text-[#050505]/75">
-              DIGITAL PARTNER
-            </span>
-            <span className="w-10 h-px bg-[#050505]/25 inline-block" />
-          </div>
-
-          {/* Main Headline - Stacked 4 lines with IMPOSSIBLE in brand yellow */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.75rem] xl:text-[5.35rem] font-black tracking-[-0.035em] leading-[0.91] uppercase select-none text-[#050505]">
-            <span>WE MAKE</span>
-            <br />
-            <span>IDEAS</span>
-            <br />
-            <span className="text-[#FFD600]">IMPOSSIBLE</span>
-            <br />
-            <span>TO IGNORE.</span>
-          </h1>
-
-          {/* Supporting Copy */}
-          <p className="mt-5 sm:mt-6 text-sm sm:text-base md:text-[1.05rem] font-normal leading-relaxed text-[#050505]/70 max-w-sm sm:max-w-md">
-            Digital experiences, campaigns and stories built to move brands forward.
-          </p>
-
-          {/* Dual CTA Buttons: Pill 'LET'S TALK' and 'WATCH SHOWREEL' */}
-          <div className="mt-7 sm:mt-8 flex flex-wrap items-center gap-4 sm:gap-6">
-            <a
-              href="#contact"
-              className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#111111] hover:bg-[#FFD600] text-white hover:text-[#111111] text-xs font-mono font-bold tracking-[0.16em] uppercase transition-all duration-300 shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD600]"
-              aria-label="Let's talk with FOB Media"
+        {/* float lives on the wrapper so the filtered SVG isn't re-rendered every frame */}
+        <div className="fob-float">
+          <svg
+            ref={logoRef}
+            className="fob-logo3d"
+            viewBox="40 30 820 520"
+            role="img"
+            aria-label="FOB Media"
+          >
+            <defs>
+              <filter id="puffY" x="-10%" y="-10%" width="120%" height="125%" colorInterpolationFilters="sRGB">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="13" result="h" />
+                <feDiffuseLighting in="h" surfaceScale="9" diffuseConstant="1.15" lightingColor="#ffd600" result="d">
+                  <feDistantLight azimuth="235" elevation="52" />
+                </feDiffuseLighting>
+                <feSpecularLighting in="h" surfaceScale="9" specularConstant=".45" specularExponent="34" lightingColor="#fff4b0" result="s">
+                  <feDistantLight azimuth="235" elevation="55" />
+                </feSpecularLighting>
+                <feComposite in="d" in2="SourceAlpha" operator="in" result="dIn" />
+                <feComposite in="s" in2="SourceAlpha" operator="in" result="sIn" />
+                <feComposite in="dIn" in2="sIn" operator="arithmetic" k1="0" k2="1" k3=".6" k4="0" />
+              </filter>
+              <filter id="puffK" x="-10%" y="-10%" width="120%" height="125%" colorInterpolationFilters="sRGB">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="9" result="h" />
+                <feDiffuseLighting in="h" surfaceScale="8" diffuseConstant=".5" lightingColor="#4a4a4a" result="d">
+                  <feDistantLight azimuth="235" elevation="50" />
+                </feDiffuseLighting>
+                <feSpecularLighting in="h" surfaceScale="8" specularConstant=".4" specularExponent="30" lightingColor="#ffffff" result="s">
+                  <feDistantLight azimuth="235" elevation="52" />
+                </feSpecularLighting>
+                <feComposite in="d" in2="SourceAlpha" operator="in" result="dIn" />
+                <feComposite in="s" in2="SourceAlpha" operator="in" result="sIn" />
+                <feComposite in="dIn" in2="sIn" operator="arithmetic" k1="0" k2="1" k3=".55" k4="0" />
+              </filter>
+            </defs>
+            <text
+              x="450" y="330" textAnchor="middle" fontSize="360" letterSpacing="-8"
+              fontWeight="700" fill="#000" filter="url(#puffY)"
+              style={{ fontFamily: fredoka.style.fontFamily }}
             >
-              <span>LET&apos;S TALK</span>
-              <span className="text-sm transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                ↗
-              </span>
-            </a>
-
-            <a
-              href="#work"
-              className="group inline-flex items-center gap-3 text-xs font-mono font-bold tracking-[0.16em] uppercase text-[#050505] hover:text-[#FFD600] transition-colors"
-              aria-label="Watch Showreel"
+              fob
+            </text>
+            <text
+              x="450" y="500" textAnchor="middle" fontSize="205" letterSpacing="-6"
+              fontWeight="700" fill="#000" filter="url(#puffK)"
+              style={{ fontFamily: fredoka.style.fontFamily }}
             >
-              <span className="w-11 h-11 rounded-full bg-white border border-[#050505]/15 flex items-center justify-center shadow-xs transition-transform duration-300 group-hover:scale-105 group-hover:border-[#FFD600]">
-                <span className="w-0 h-0 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent border-l-[8px] border-l-[#050505] translate-x-0.5 group-hover:border-l-[#FFD600] transition-colors" />
-              </span>
-              <span>WATCH SHOWREEL</span>
-            </a>
-          </div>
+              media
+            </text>
+          </svg>
         </div>
       </div>
 
-      {/* Bottom HUD Bar: Stats on the left, Scroll cue on the right */}
-      <div className="relative z-10 max-w-[1720px] w-full mx-auto px-6 sm:px-10 md:px-14">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 border-t border-[#050505]/10 pt-5 md:pt-6">
-          {/* Key Metrics / Stats */}
-          <div className="flex items-center gap-6 sm:gap-8 md:gap-10">
-            <div>
-              <div className="font-heading font-black text-2xl sm:text-3xl text-[#050505] leading-none mb-1">
-                50+
-              </div>
-              <div className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest text-[#050505]/60 uppercase">
-                BRANDS
-              </div>
-            </div>
-            <div className="h-8 w-px bg-[#050505]/15" />
-            <div>
-              <div className="font-heading font-black text-2xl sm:text-3xl text-[#050505] leading-none mb-1">
-                250+
-              </div>
-              <div className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest text-[#050505]/60 uppercase">
-                CAMPAIGNS
-              </div>
-            </div>
-            <div className="h-8 w-px bg-[#050505]/15" />
-            <div>
-              <div className="font-heading font-black text-2xl sm:text-3xl text-[#050505] leading-none mb-1">
-                8+
-              </div>
-              <div className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest text-[#050505]/60 uppercase">
-                YEARS
-              </div>
-            </div>
-          </div>
-
-          {/* Scroll cue with circular down arrow button */}
-          <div className="flex items-center gap-3 font-mono text-[11px] tracking-widest uppercase text-[#050505]/70">
-            <span className="hidden sm:inline">SCROLL TO EXPLORE</span>
-            <a
-              href="#brand-statement"
-              aria-label="Scroll to explore"
-              className="w-10 h-10 rounded-full border border-[#050505]/20 bg-white/90 backdrop-blur-xs flex items-center justify-center hover:bg-[#050505] hover:text-[#FFD600] transition-all duration-300 shadow-xs"
-            >
-              ↓
-            </a>
-          </div>
-        </div>
-      </div>
+      <style jsx global>{`
+        .fob-hero{--fob-nav:88px;position:relative;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;
+          background:radial-gradient(60% 40% at 50% 92%,rgba(255,214,0,.28),transparent 70%),#f6f5f2;color:#111}
+        /* grid + place-items centers the logo in the space below the navbar, both ways */
+        .fob-stage{position:relative;flex:1;display:grid;place-items:center;
+          padding:var(--fob-nav) clamp(12px,4vw,56px) 24px}
+        .fob-float{width:min(74vw,860px,calc((100svh - var(--fob-nav)) * 1.45));animation:fobFloat 6s ease-in-out infinite}
+        .fob-logo3d{display:block;width:100%;height:auto;overflow:visible;will-change:transform}
+        @keyframes fobFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+        .fob-side{position:absolute;z-index:3;margin:0;font-weight:700;font-size:12px;letter-spacing:.14em;line-height:1.65;text-transform:uppercase}
+        .fob-l{left:clamp(18px,4vw,56px);top:30%}
+        .fob-r{right:clamp(18px,4vw,56px);top:26%}
+        .fob-side hr{border:0;border-top:1px solid #cfcdc6;width:70px;margin:12px 0 0}
+        .fob-arrow{position:absolute;z-index:3;fill:none;stroke:#111;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;width:110px;top:44%}
+        .fob-al{left:5%}.fob-ar{right:5%}
+        .fob-spark{position:absolute;z-index:3;left:56%;top:calc(var(--fob-nav) + 4%);width:26px;fill:#111}
+        .fob-pill{position:absolute;z-index:6;font-weight:700;font-size:12px;letter-spacing:.12em;padding:12px 24px;border-radius:999px;text-transform:uppercase;box-shadow:0 14px 30px rgba(0,0,0,.14)}
+        .fob-y{left:12%;bottom:15%;background:#ffd600;transform:rotate(-8deg)}
+        .fob-w{right:11%;bottom:20%;background:#fff;transform:rotate(6deg)}
+        @media (max-width:820px){
+          .fob-hero{--fob-nav:72px}
+          .fob-side{font-size:10px;top:18%}
+          .fob-arrow{display:none}
+          .fob-float{width:94vw}
+          .fob-y{left:6%;bottom:12%}.fob-w{right:6%;bottom:16%}
+        }
+        @media (prefers-reduced-motion:reduce){.fob-float{animation:none}}
+      `}</style>
     </section>
   );
 }
+
+export { Hero as FobHero };
+export default Hero;
