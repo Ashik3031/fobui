@@ -12,6 +12,45 @@ const UAE_OFFICE = {
   email: 'hello@fobmedia.com',
 };
 
+const COUNTRY_CODES = [
+  { flag: '🇦🇪', code: '+971', country: 'United Arab Emirates', short: 'UAE' },
+  { flag: '🇸🇦', code: '+966', country: 'Saudi Arabia', short: 'KSA' },
+  { flag: '🇶🇦', code: '+974', country: 'Qatar', short: 'QA' },
+  { flag: '🇰🇼', code: '+965', country: 'Kuwait', short: 'KW' },
+  { flag: '🇧🇭', code: '+973', country: 'Bahrain', short: 'BH' },
+  { flag: '🇴🇲', code: '+968', country: 'Oman', short: 'OM' },
+  { flag: '🇺🇸', code: '+1', country: 'United States', short: 'USA' },
+  { flag: '🇬🇧', code: '+44', country: 'United Kingdom', short: 'UK' },
+  { flag: '🇮🇳', code: '+91', country: 'India', short: 'IN' },
+  { flag: '🇵🇰', code: '+92', country: 'Pakistan', short: 'PK' },
+  { flag: '🇪🇬', code: '+20', country: 'Egypt', short: 'EG' },
+  { flag: '🇯🇴', code: '+962', country: 'Jordan', short: 'JO' },
+  { flag: '🇱🇧', code: '+961', country: 'Lebanon', short: 'LB' },
+  { flag: '🇨🇦', code: '+1', country: 'Canada', short: 'CA' },
+  { flag: '🇦🇺', code: '+61', country: 'Australia', short: 'AU' },
+  { flag: '🇩🇪', code: '+49', country: 'Germany', short: 'DE' },
+  { flag: '🇫🇷', code: '+33', country: 'France', short: 'FR' },
+  { flag: '🇮🇹', code: '+39', country: 'Italy', short: 'IT' },
+  { flag: '🇪🇸', code: '+34', country: 'Spain', short: 'ES' },
+  { flag: '🇳🇱', code: '+31', country: 'Netherlands', short: 'NL' },
+  { flag: '🇨🇭', code: '+41', country: 'Switzerland', short: 'CH' },
+  { flag: '🇸🇬', code: '+65', country: 'Singapore', short: 'SG' },
+  { flag: '🇲🇾', code: '+60', country: 'Malaysia', short: 'MY' },
+  { flag: '🇨🇳', code: '+86', country: 'China', short: 'CN' },
+  { flag: '🇯🇵', code: '+81', country: 'Japan', short: 'JP' },
+  { flag: '🇰🇷', code: '+82', country: 'South Korea', short: 'KR' },
+  { flag: '🇹🇷', code: '+90', country: 'Turkey', short: 'TR' },
+  { flag: '🇿🇦', code: '+27', country: 'South Africa', short: 'ZA' },
+  { flag: '🇧🇷', code: '+55', country: 'Brazil', short: 'BR' },
+  { flag: '🇷🇺', code: '+7', country: 'Russia', short: 'RU' },
+  { flag: '🇮🇩', code: '+62', country: 'Indonesia', short: 'ID' },
+  { flag: '🇵🇭', code: '+63', country: 'Philippines', short: 'PH' },
+  { flag: '🇳🇿', code: '+64', country: 'New Zealand', short: 'NZ' },
+  { flag: '🇮🇪', code: '+353', country: 'Ireland', short: 'IE' },
+  { flag: '🇸🇪', code: '+46', country: 'Sweden', short: 'SE' },
+  { flag: '🇳🇴', code: '+47', country: 'Norway', short: 'NO' },
+];
+
 export function FinalCTA() {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [form, setForm] = useState({
@@ -19,12 +58,13 @@ export function FinalCTA() {
     lastName: '',
     email: '',
     companyName: '',
+    countryCode: '+971',
     phone: '',
     message: '',
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -206,14 +246,40 @@ export function FinalCTA() {
                 </div>
               </div>
 
-              {/* Row 3: Phone Number (UAE only) */}
+              {/* Row 3: Phone Number with Country Code Selector */}
               <div className="flex flex-col gap-2">
                 <label htmlFor="phone" className="text-sm font-medium text-white/90">
                   Phone number<span className="text-[#FFD600]">*</span>
                 </label>
-                <div className="flex gap-3">
-                  <div className="w-28 sm:w-32 bg-white text-[#050505] font-bold font-mono text-sm rounded-xl px-3 sm:px-4 py-3.5 flex items-center justify-center select-none shadow-xs">
-                    +971
+                <div className="flex gap-2.5 sm:gap-3">
+                  <div className="relative shrink-0 w-36 sm:w-44">
+                    <select
+                      id="countryCode"
+                      name="countryCode"
+                      value={form.countryCode}
+                      onChange={handleChange}
+                      aria-label="Select Country Code"
+                      className="w-full h-full appearance-none bg-white text-[#050505] font-semibold text-xs sm:text-sm rounded-xl pl-3.5 pr-8 py-3.5 outline-none focus:ring-2 focus:ring-[#FFD600] cursor-pointer shadow-xs transition-all truncate"
+                    >
+                      {COUNTRY_CODES.map((item) => (
+                        <option
+                          key={`${item.code}-${item.country}`}
+                          value={item.code}
+                          className="text-[#050505] bg-white"
+                        >
+                          {item.flag} {item.code} ({item.short})
+                        </option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-2.5 sm:right-3 flex items-center text-[#050505]/60">
+                      <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
                   </div>
                   <input
                     id="phone"
@@ -223,7 +289,7 @@ export function FinalCTA() {
                     placeholder="50 123 4567"
                     value={form.phone}
                     onChange={handleChange}
-                    className="flex-1 bg-white text-[#050505] placeholder-[#050505]/40 rounded-xl px-4 py-3.5 text-sm sm:text-base outline-none focus:ring-2 focus:ring-[#FFD600] transition-all"
+                    className="flex-1 min-w-0 bg-white text-[#050505] placeholder-[#050505]/40 rounded-xl px-4 py-3.5 text-sm sm:text-base outline-none focus:ring-2 focus:ring-[#FFD600] transition-all"
                   />
                 </div>
               </div>

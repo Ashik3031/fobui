@@ -102,7 +102,7 @@ interface ParticlesProps {
 }
 
 export default function Particles({
-  particleCount = 400,
+  particleCount = 500,
   particleSpread = 10,
   speed = 0.1,
   particleColors,
@@ -136,24 +136,50 @@ export default function Particles({
     camera.position.set(0, 0, cameraDistance);
 
     const resize = () => {
-      const width = container.clientWidth;
-      const height = container.clientHeight;
+      if (!container) return;
+      const width = container.clientWidth || window.innerWidth;
+      const height = container.clientHeight || 600;
       renderer.setSize(width, height);
       camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
     };
     window.addEventListener('resize', resize, false);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        resize();
+      });
+      resizeObserver.observe(container);
+    }
     resize();
 
     const handleMouseMove = (e: MouseEvent) => {
+      if (!container) return;
       const rect = container.getBoundingClientRect();
-      // Calculate normalized -1 to 1 coordinates relative to this container
-      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      mouseRef.current = { x, y };
+      const inX = e.clientX >= rect.left && e.clientX <= rect.right;
+      const inY = e.clientY >= rect.top && e.clientY <= rect.bottom;
+
+      if (inX && inY && rect.width > 0 && rect.height > 0) {
+        // Calculate normalized coordinates clamped to [-1, 1] relative to the container
+        const rawX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const rawY = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+        mouseRef.current = {
+          x: Math.max(-1, Math.min(1, rawX)),
+          y: Math.max(-1, Math.min(1, rawY)),
+        };
+      } else {
+        // Outside the container: smoothly return to center so particles stay visible
+        mouseRef.current = { x: 0, y: 0 };
+      }
+    };
+
+    const handleMouseLeave = () => {
+      mouseRef.current = { x: 0, y: 0 };
     };
 
     if (moveParticlesOnHover) {
       window.addEventListener('mousemove', handleMouseMove, { passive: true });
+      document.documentElement.addEventListener('mouseleave', handleMouseLeave);
     }
 
     const count = particleCount;
@@ -238,8 +264,12 @@ export default function Particles({
 
     return () => {
       window.removeEventListener('resize', resize);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       if (moveParticlesOnHover) {
         window.removeEventListener('mousemove', handleMouseMove);
+        document.documentElement.removeEventListener('mouseleave', handleMouseLeave);
       }
       cancelAnimationFrame(animationFrameId);
       if (container.contains(gl.canvas)) {

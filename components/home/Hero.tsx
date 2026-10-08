@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { Fredoka } from 'next/font/google';
 
-const fredoka = Fredoka({ subsets: ['latin'], weight: ['700'] });
+const fredoka = Fredoka({ subsets: ['latin'], weight: ['700'], display: 'swap' });
 
 const clamp = (n: number) => Math.max(-1, Math.min(1, n));
 
@@ -62,13 +62,13 @@ export function Hero() {
   return (
     <section ref={heroRef} className="fob-hero">
       <div className="fob-stage">
-        <p className="fob-side fob-l" data-depth="14">
+        <div className="fob-side fob-l" data-depth="14">
           A digital<br />growth studio<br />UAE — GCC
           <hr />
-        </p>
-        <p className="fob-side fob-r" data-depth="14">
+        </div>
+        <div className="fob-side fob-r" data-depth="14">
           Websites<br />Marketing<br />Content<br />and more
-        </p>
+        </div>
 
         <svg className="fob-arrow fob-al" data-depth="24" viewBox="0 0 110 110" aria-hidden="true">
           <path d="M8 6C4 52 30 88 98 98" />
@@ -137,35 +137,6 @@ export function Hero() {
           </svg>
         </div>
       </div>
-
-      <style jsx global>{`
-        .fob-hero{--fob-nav:88px;position:relative;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;
-          background:radial-gradient(60% 40% at 50% 92%,rgba(255,214,0,.28),transparent 70%),#f6f5f2;color:#111}
-        /* grid + place-items centers the logo in the space below the navbar, both ways */
-        .fob-stage{position:relative;flex:1;display:grid;place-items:center;
-          padding:var(--fob-nav) clamp(12px,4vw,56px) 24px}
-        .fob-float{width:min(74vw,860px,calc((100svh - var(--fob-nav)) * 1.45));animation:fobFloat 6s ease-in-out infinite}
-        .fob-logo3d{display:block;width:100%;height:auto;overflow:visible;will-change:transform}
-        @keyframes fobFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-        .fob-side{position:absolute;z-index:3;margin:0;font-weight:700;font-size:12px;letter-spacing:.14em;line-height:1.65;text-transform:uppercase}
-        .fob-l{left:clamp(18px,4vw,56px);top:30%}
-        .fob-r{right:clamp(18px,4vw,56px);top:26%}
-        .fob-side hr{border:0;border-top:1px solid #cfcdc6;width:70px;margin:12px 0 0}
-        .fob-arrow{position:absolute;z-index:3;fill:none;stroke:#111;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;width:110px;top:44%}
-        .fob-al{left:5%}.fob-ar{right:5%}
-        .fob-spark{position:absolute;z-index:3;left:56%;top:calc(var(--fob-nav) + 4%);width:26px;fill:#111}
-        .fob-pill{position:absolute;z-index:6;font-weight:700;font-size:12px;letter-spacing:.12em;padding:12px 24px;border-radius:999px;text-transform:uppercase;box-shadow:0 14px 30px rgba(0,0,0,.14)}
-        .fob-y{left:12%;bottom:15%;background:#ffd600;transform:rotate(-8deg)}
-        .fob-w{right:11%;bottom:20%;background:#fff;transform:rotate(6deg)}
-        @media (max-width:820px){
-          .fob-hero{--fob-nav:72px}
-          .fob-side{font-size:10px;top:18%}
-          .fob-arrow{display:none}
-          .fob-float{width:94vw}
-          .fob-y{left:6%;bottom:12%}.fob-w{right:6%;bottom:16%}
-        }
-        @media (prefers-reduced-motion:reduce){.fob-float{animation:none}}
-      `}</style>
     </section>
   );
 }
