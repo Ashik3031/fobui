@@ -1,18 +1,39 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MAIN_NAV_ITEMS } from '@/data/navigation';
 import { FobLogo } from '@/components/ui/FobLogo';
 import { MobileMenu } from './MobileMenu';
 
 export function Navbar() {
+  const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
+    lastScrollY.current = window.scrollY;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = Math.max(0, window.scrollY);
+      const delta = currentScrollY - lastScrollY.current;
+
+      setIsScrolled(currentScrollY > 20);
+
+      // At the very top of the page, the navbar should always be visible
+      if (currentScrollY <= 20) {
+        setIsVisible(true);
+      } else if (Math.abs(delta) > 5) {
+        // Hide while scrolling down; reveal when scrolling back up
+        if (delta > 0) {
+          setIsVisible(false);
+        } else if (delta < 0) {
+          setIsVisible(true);
+        }
+      }
+
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -20,14 +41,22 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const showNavbar = isVisible || isMobileMenuOpen;
+
   return (
     <>
       <header
-        className="fixed top-3 sm:top-5 left-0 right-0 z-50 flex justify-center px-3 sm:px-6 pointer-events-none transition-all duration-300"
+        className={`fixed top-3 sm:top-5 left-0 right-0 z-50 flex justify-center px-3 sm:px-6 pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          showNavbar
+            ? 'translate-y-0 opacity-100'
+            : '-translate-y-[calc(100%+2rem)] opacity-0'
+        }`}
         role="banner"
       >
         <div
-          className={`pointer-events-auto w-full max-w-[1240px] rounded-full bg-[#050505] px-4 sm:px-7 md:px-8 flex items-center justify-between transition-all duration-300 border border-white/15 ${
+          className={`w-full max-w-[1240px] rounded-full bg-[#050505] px-4 sm:px-7 md:px-8 flex items-center justify-between transition-all duration-300 border border-white/15 ${
+            showNavbar ? 'pointer-events-auto' : 'pointer-events-none'
+          } ${
             isScrolled
               ? 'py-2 sm:py-2.5 shadow-[0_14px_36px_rgba(0,0,0,0.4)]'
               : 'py-2.5 sm:py-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.3)]'

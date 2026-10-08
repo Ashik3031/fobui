@@ -65,7 +65,7 @@ export function Approach() {
         {/* ====================================================
             SECTION HEADER
             ==================================================== */}
-        <div className="flex items-center justify-between border-b border-white/15 pb-6 mb-16 sm:mb-24">
+        <div className="flex items-center justify-between border-b border-white/15 pb-4 sm:pb-5 mb-8 sm:mb-10">
           <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.25em] uppercase text-[#FFD600]">
             {APPROACH_DATA.label}
           </span>
@@ -76,7 +76,7 @@ export function Approach() {
 
         {/* Section Headline & Narrative */}
         <div className="mb-20 sm:mb-28">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <h2 className="fob-section-heading text-[#F7F7F5] tracking-tighter">
                 THINK.<br />

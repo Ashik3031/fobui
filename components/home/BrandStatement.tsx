@@ -147,24 +147,10 @@ export function BrandStatement() {
       "
     >
       {/* ========================================================
-          CURSOR IMAGE TRAIL — full section
-          ======================================================== */}
-
-      <div
-        className="absolute inset-0 z-20 pointer-events-auto"
-        aria-hidden="true"
-      >
-        <ImageTrail
-          items={TRAIL_IMAGES}
-          variant={5}
-        />
-      </div>
-
-      {/* ========================================================
           MAIN CONTENT
           ======================================================== */}
 
-      <div className="relative z-10 pointer-events-none">
+      <div className="relative z-10">
         <div
           className="
             max-w-[1720px]
@@ -191,9 +177,10 @@ export function BrandStatement() {
               justify-between
               border-b
               border-[#050505]/15
-              pb-6
-              mb-20
-              sm:mb-32
+              pb-4
+              sm:pb-5
+              mb-8
+              sm:mb-10
             "
           >
             <span
@@ -226,7 +213,7 @@ export function BrandStatement() {
               HEADLINE
               ==================================================== */}
 
-          <div className="relative flex mt-12 sm:mt-16 mb-20 sm:mb-28 md:mb-32">
+          <div className="relative flex mb-20 sm:mb-28 md:mb-32">
             {/* Massive editorial headline */}
 
             <h2
@@ -330,20 +317,34 @@ export function BrandStatement() {
               EDITORIAL INFORMATION GRID
               ==================================================== */}
 
-          <div
-            className="
-              grid
-              grid-cols-1
-              lg:grid-cols-12
-              gap-12
-              lg:gap-16
-              pt-12
-              sm:pt-14
-              border-t
-              border-[#050505]/15
-              items-center
-            "
-          >
+          <div className="relative">
+            {/* Cursor Image Trail — scoped only to EDITORIAL INFORMATION GRID space */}
+            <div
+              className="absolute inset-0 z-20 pointer-events-auto"
+              aria-hidden="true"
+            >
+              <ImageTrail
+                items={TRAIL_IMAGES}
+                variant={5}
+              />
+            </div>
+
+            <div
+              className="
+                relative
+                z-10
+                grid
+                grid-cols-1
+                lg:grid-cols-12
+                gap-12
+                lg:gap-16
+                pt-12
+                sm:pt-14
+                border-t
+                border-[#050505]/15
+                items-center
+              "
+            >
             {/* Philosophy */}
 
             <div className="lg:col-span-4">
@@ -379,12 +380,11 @@ export function BrandStatement() {
             <div className="lg:col-span-5">
               <p
                 className="
-                  text-lg
-                  sm:text-xl
-                  md:text-2xl
+                  text-base
+                  sm:text-lg
                   font-normal
                   leading-relaxed
-                  text-[#050505]/90
+                  text-[#050505]/75
                 "
               >
                 {BRAND_STATEMENT_DATA.copy}
@@ -408,7 +408,7 @@ export function BrandStatement() {
                       className="
                         font-mono
                         text-[11px]
-                        font-bold
+                        font-normal
                         tracking-[0.25em]
                         text-[#050505]/60
                         uppercase
@@ -435,6 +435,7 @@ export function BrandStatement() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </section>
   );

@@ -41,7 +41,7 @@ export function WhatMakesFobDifferent() {
         {/* ====================================================
             SECTION HEADER
             ==================================================== */}
-        <div className="flex items-center justify-between border-b border-white/15 pb-6 mb-16 sm:mb-20">
+        <div className="flex items-center justify-between border-b border-white/15 pb-4 sm:pb-5 mb-8 sm:mb-10">
           <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.25em] uppercase text-[#FFD600]">
             05 / THE FOB ADVANTAGE
           </span>

@@ -22,7 +22,7 @@ export function Footer() {
     >
       <div className="max-w-[1720px] mx-auto px-6 sm:px-10 md:px-14">
         {/* Top Grid: Brand Statement & Navigation & Contact */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-16 pb-20 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-16 pb-15 border-b border-white/10">
           {/* Brand Column (5 Cols) */}
           <div className="lg:col-span-5 flex flex-col justify-between gap-8">
             <div>
@@ -107,14 +107,10 @@ export function Footer() {
         </div>
 
         {/* Large Decorative Brand Signoff */}
-        <div className="py-12 border-b border-white/10 select-none overflow-hidden text-center">
-          <div className="font-heading text-[12.5vw] sm:text-[13.5vw] lg:text-[14vw] font-black leading-none tracking-wider sm:tracking-[0.06em] lg:tracking-[0.08em] text-white/20 hover:text-[#FFD600] transition-colors duration-500 whitespace-nowrap text-center cursor-default">
-            FOB MEDIA
-          </div>
-        </div>
+
 
         {/* Bottom Legal & Colophon */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] tracking-widest uppercase text-white/50">
+        <div className=" flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] tracking-widest uppercase text-white/50">
           <div>
             © {BRAND.year} {BRAND.name}. ALL RIGHTS RESERVED.
           </div>

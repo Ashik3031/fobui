@@ -53,7 +53,7 @@ export const HERO_DATA = {
 export const BRAND_STATEMENT_DATA = {
   label: '01 / WHY FOB',
   headline: 'WE BUILD DIGITAL EXPERIENCES THAT MOVE BUSINESS.',
-  copy: 'We combine strategy, creativity and technology to create digital experiences that help ambitious brands move forward. In an ecosystem saturated with noise, we engineer clarity, cultural resonance, and measurable market dominance.',
+  copy: 'We combine strategy, creativity and technology to create digital experiences that help ambitious brands move forward. In an ecosystem saturated with noise, we engineer clarity, cultural resonance, and measurable market dominance.We combine strategy, creativity and technology to create digital experiences that help ambitious brands move forward.',
   metrics: [
     { label: 'DISCIPLINE', value: 'FULL-STACK' },
     { label: 'EXECUTION', value: 'SUB-SECOND' },
@@ -109,7 +109,7 @@ export const SELECTED_PROJECTS: Project[] = [
 export const APPROACH_DATA = {
   label: '04 / OUR APPROACH',
   heading: 'THINK. MAKE. MOVE.',
-  copy: 'A collaborative process designed to turn ideas into measurable digital growth.',
+  copy: 'A collaborative process built around strategy, creativity, and technology transforming ambitious ideas into meaningful digital experiences, measurable growth, and lasting business impact.A collaborative process built around strategy, creativity, and technology transforming ambitious.',
   steps: [
     {
       step: '01',
