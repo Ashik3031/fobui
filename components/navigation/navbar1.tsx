@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { MAIN_NAV_ITEMS } from '@/data/navigation';
 import { FobLogo } from '@/components/ui/FobLogo';
+import { useTransition } from '@/components/motion/TransitionProvider';
 import { MobileMenu } from './MobileMenu';
 
 export function Navbar() {
+    const transition = useTransition();
     const [theme, setTheme] = useState<'light' | 'dark'>('light'); // 'light' means light/yellow bg -> dark text; 'dark' means dark bg -> white text
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -78,9 +80,13 @@ export function Navbar() {
                             <a
                                 key={item.id}
                                 href={item.href}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    transition(item.href, item.label);
+                                }}
                                 onMouseEnter={() => setHoveredNav(item.id)}
                                 onMouseLeave={() => setHoveredNav(null)}
-                                className={`relative py-2 text-xs tracking-[0.2em] font-extrabold uppercase transition-colors duration-200 ${textColor} group`}
+                                className={`relative py-2 text-xs tracking-[0.2em] font-extrabold uppercase transition-colors duration-200 ${textColor} group cursor-pointer`}
                             >
                                 <span className="relative z-10 block transition-transform duration-200 group-hover:-translate-y-0.5">
                                     {item.label}
@@ -100,7 +106,11 @@ export function Navbar() {
                     <div className="flex items-center gap-6">
                         <a
                             href="#contact"
-                            className={`hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-mono text-xs tracking-[0.16em] font-bold uppercase transition-all duration-300 shadow-xs group ${isDarkContent
+                            onClick={(e) => {
+                                e.preventDefault();
+                                transition('#contact', "LET'S TALK");
+                            }}
+                            className={`hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-mono text-xs tracking-[0.16em] font-bold uppercase transition-all duration-300 shadow-xs group cursor-pointer ${isDarkContent
                                     ? 'bg-[#111111] text-white hover:bg-[#FFD600] hover:text-[#111111]'
                                     : 'bg-[#FFD600] text-[#050505] hover:bg-white hover:text-[#050505]'
                                 }`}

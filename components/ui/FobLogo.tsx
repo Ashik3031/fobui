@@ -1,5 +1,8 @@
+'use client';
+
+import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useTransition } from '@/components/motion/TransitionProvider';
 
 interface FobLogoProps {
   color?: 'black' | 'white' | 'yellow';
@@ -8,6 +11,7 @@ interface FobLogoProps {
   asLink?: boolean;
   width?: number;
   height?: number;
+  onClick?: () => void;
 }
 
 export function FobLogo({
@@ -17,7 +21,10 @@ export function FobLogo({
   asLink = true,
   width = 160,
   height = 113,
+  onClick,
 }: FobLogoProps) {
+  const transition = useTransition();
+
   const logoSrc =
     color === 'white'
       ? '/logo/fob-logo-white.png'
@@ -42,13 +49,20 @@ export function FobLogo({
     return logoElement;
   }
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onClick) onClick();
+    transition('/', 'HOME');
+  };
+
   return (
-    <Link
+    <a
       href="/"
-      className="inline-flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD600] group"
+      onClick={handleClick}
+      className="inline-flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD600] group cursor-pointer"
       aria-label="FOB Media — Homepage"
     >
       {logoElement}
-    </Link>
+    </a>
   );
 }

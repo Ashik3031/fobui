@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import { SELECTED_PROJECTS } from '@/data/home';
+import { useTransition } from '@/components/motion/TransitionProvider';
 
 const items = (SELECTED_PROJECTS ?? []).map((project) => ({
   id: String(project.id),
@@ -25,6 +25,7 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 const clamp = (v: number, min = 0, max = 1) => Math.min(max, Math.max(min, v));
 
 export function SelectedWork() {
+  const transition = useTransition();
   const sectionRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0); // 0 → 1 across the whole section
   const count = items.length;
@@ -186,12 +187,16 @@ export function SelectedWork() {
             </div>
 
             <h2 className="font-heading text-[clamp(1.85rem,3.4vw,3.6rem)] font-black uppercase leading-[1.04] tracking-tight text-[#050505]">
-              <Link
+              <a
                 href={current.href}
-                className="hover:opacity-75 transition-opacity focus-visible:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  transition(current.href, current.title);
+                }}
+                className="hover:opacity-75 transition-opacity focus-visible:underline cursor-pointer"
               >
                 {current.title}
-              </Link>
+              </a>
             </h2>
 
             <p className="mt-4 sm:mt-5 max-w-[30rem] text-sm sm:text-base leading-relaxed text-[#050505]/75 font-normal">
@@ -212,13 +217,17 @@ export function SelectedWork() {
             )}
 
             <div className="mt-6 sm:mt-7">
-              <Link
+              <a
                 href={current.href}
-                className="group inline-flex items-center gap-3 font-mono text-xs font-bold tracking-[0.2em] uppercase text-[#050505] hover:opacity-70 transition-opacity"
+                onClick={(e) => {
+                  e.preventDefault();
+                  transition(current.href, current.title);
+                }}
+                className="group inline-flex items-center gap-3 font-mono text-xs font-bold tracking-[0.2em] uppercase text-[#050505] hover:opacity-70 transition-opacity cursor-pointer"
               >
                 <span>VIEW CASE STUDY</span>
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-              </Link>
+              </a>
             </div>
           </div>
         </div>

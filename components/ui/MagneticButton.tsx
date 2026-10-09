@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useSyncExternalStore } from 'react';
-import Link from 'next/link';
+import { useTransition } from '@/components/motion/TransitionProvider';
 
 function subscribeReducedMotion(callback: () => void) {
   if (typeof window === 'undefined') return () => {};
@@ -38,6 +38,7 @@ export function MagneticButton({
   ariaLabel,
   magneticStrength = 0.25,
 }: MagneticButtonProps) {
+  const transition = useTransition();
   const buttonRef = useRef<HTMLAnchorElement & HTMLButtonElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const isReducedMotion = useSyncExternalStore(
@@ -91,7 +92,7 @@ export function MagneticButton({
     const isInternal = href.startsWith('#') || href.startsWith('/');
     if (isInternal) {
       return (
-        <Link
+        <a
           ref={buttonRef}
           href={href}
           aria-label={ariaLabel}
@@ -99,10 +100,15 @@ export function MagneticButton({
           onMouseLeave={handleMouseLeave}
           style={transformStyle}
           className={combinedClasses}
-          onClick={onClick}
+          onClick={(e) => {
+            e.preventDefault();
+            if (onClick) onClick();
+            const label = typeof children === 'string' ? children : (ariaLabel || 'NAVIGATE');
+            transition(href, label);
+          }}
         >
           {children}
-        </Link>
+        </a>
       );
     }
     return (

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Arrow } from '@/components/ui/Arrow';
 import Particles from '@/components/ui/Particles';
+import { useTransition } from '@/components/motion/TransitionProvider';
 
 const UAE_OFFICE = {
   label: 'UAE HEAD OFFICE',
@@ -52,6 +53,7 @@ const COUNTRY_CODES = [
 ];
 
 export function FinalCTA() {
+  const transition = useTransition();
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [form, setForm] = useState({
     firstName: '',
@@ -317,8 +319,12 @@ export function FinalCTA() {
                 unsubscribe from these communications at any time. For more information, check out
                 our{' '}
                 <a
-                  href="#privacy"
-                  className="text-white hover:text-[#FFD600] underline transition-colors"
+                  href="/privacy"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    transition('/privacy', 'PRIVACY POLICY');
+                  }}
+                  className="text-white hover:text-[#FFD600] underline transition-colors cursor-pointer"
                 >
                   Privacy Policy
                 </a>

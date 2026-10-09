@@ -3,9 +3,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MAIN_NAV_ITEMS } from '@/data/navigation';
 import { FobLogo } from '@/components/ui/FobLogo';
+import { useTransition } from '@/components/motion/TransitionProvider';
 import { MobileMenu } from './MobileMenu';
 
 export function Navbar() {
+  const transition = useTransition();
   const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -82,9 +84,13 @@ export function Navbar() {
               <a
                 key={item.id}
                 href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  transition(item.href, item.label);
+                }}
                 onMouseEnter={() => setHoveredNav(item.id)}
                 onMouseLeave={() => setHoveredNav(null)}
-                className="relative py-1.5 text-xs tracking-[0.2em] font-extrabold uppercase transition-colors duration-200 text-white hover:text-[#fed604] group"
+                className="relative py-1.5 text-xs tracking-[0.2em] font-extrabold uppercase transition-colors duration-200 text-white hover:text-[#fed604] group cursor-pointer"
               >
                 <span className="relative z-10 block transition-transform duration-200 group-hover:-translate-y-0.5">
                   {item.label}
@@ -105,7 +111,11 @@ export function Navbar() {
           <div className="flex items-center gap-4 sm:gap-6">
             <a
               href="#contact"
-              className="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full font-mono text-xs tracking-[0.16em] font-bold uppercase transition-all duration-300 shadow-xs bg-white text-[#050505] hover:bg-[#fed604] hover:text-[#050505] group"
+              onClick={(e) => {
+                e.preventDefault();
+                transition('#contact', "LET'S TALK");
+              }}
+              className="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full font-mono text-xs tracking-[0.16em] font-bold uppercase transition-all duration-300 shadow-xs bg-white text-[#050505] hover:bg-[#fed604] hover:text-[#050505] group cursor-pointer"
               aria-label="Contact FOB Media"
             >
               <span>LET&apos;S TALK</span>

@@ -1,15 +1,17 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { FOOTER_NAV_ITEMS, SOCIAL_LINKS } from '@/data/navigation';
 import { BRAND } from '@/lib/constants';
 import { FobLogo } from '@/components/ui/FobLogo';
 import { Arrow } from '@/components/ui/Arrow';
+import { useTransition } from '@/components/motion/TransitionProvider';
 
 export function Footer() {
+  const transition = useTransition();
+
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    transition('/', 'HOME');
   };
 
   return (
@@ -53,7 +55,11 @@ export function Footer() {
                 <li key={item.id}>
                   <a
                     href={item.href}
-                    className="hover:text-[#FFD600] hover:translate-x-1 inline-block transition-transform duration-200"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      transition(item.href, item.label);
+                    }}
+                    className="hover:text-[#FFD600] hover:translate-x-1 inline-block transition-transform duration-200 cursor-pointer"
                   >
                     {item.label}
                   </a>
@@ -96,7 +102,7 @@ export function Footer() {
               <button
                 type="button"
                 onClick={scrollToTop}
-                className="inline-flex items-center gap-3 font-mono text-xs font-bold tracking-[0.2em] uppercase text-white/50 hover:text-[#FFD600] transition-colors focus:outline-none"
+                className="inline-flex items-center gap-3 font-mono text-xs font-bold tracking-[0.2em] uppercase text-white/50 hover:text-[#FFD600] transition-colors focus:outline-none cursor-pointer"
                 aria-label="Scroll back to top of page"
               >
                 <span>BACK TO TOP</span>
@@ -115,13 +121,27 @@ export function Footer() {
             © {BRAND.year} {BRAND.name}. ALL RIGHTS RESERVED.
           </div>
           <div className="flex items-center gap-6">
-            <Link href="/privacy" className="hover:text-white transition-colors">
+            <a
+              href="/privacy"
+              onClick={(e) => {
+                e.preventDefault();
+                transition('/privacy', 'PRIVACY POLICY');
+              }}
+              className="hover:text-white transition-colors cursor-pointer"
+            >
               PRIVACY POLICY
-            </Link>
+            </a>
             <span>•</span>
-            <Link href="/terms" className="hover:text-white transition-colors">
+            <a
+              href="/terms"
+              onClick={(e) => {
+                e.preventDefault();
+                transition('/terms', 'TERMS');
+              }}
+              className="hover:text-white transition-colors cursor-pointer"
+            >
               TERMS
-            </Link>
+            </a>
           </div>
         </div>
       </div>

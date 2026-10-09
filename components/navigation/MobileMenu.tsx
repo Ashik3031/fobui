@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { MAIN_NAV_ITEMS, SOCIAL_LINKS } from '@/data/navigation';
 import { FobLogo } from '@/components/ui/FobLogo';
 import { Arrow } from '@/components/ui/Arrow';
+import { useTransition } from '@/components/motion/TransitionProvider';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+  const transition = useTransition();
   const overlayRef = useRef<HTMLDivElement>(null);
   const linksContainerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -97,14 +99,9 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     }
   }, [isOpen]);
 
-  const handleLinkClick = (href: string) => {
+  const handleLinkClick = (href: string, label: string) => {
     onClose();
-    if (href.startsWith('#')) {
-      const el = document.querySelector(href);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+    transition(href, label);
   };
 
   return (
@@ -118,13 +115,11 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     >
       {/* Top Bar */}
       <div className="flex items-center justify-between border-b border-[#050505]/20 pb-5">
-        <div onClick={onClose}>
-          <FobLogo color="black" width={130} height={92} priority />
-        </div>
+        <FobLogo color="black" width={130} height={92} priority onClick={onClose} />
         <button
           type="button"
           onClick={onClose}
-          className="flex items-center gap-2 p-2 font-mono text-xs tracking-widest font-black uppercase text-[#050505] hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[#050505]"
+          className="flex items-center gap-2 p-2 font-mono text-xs tracking-widest font-black uppercase text-[#050505] hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[#050505] cursor-pointer"
           aria-label="Close Navigation Menu"
         >
           <span>CLOSE</span>
@@ -140,9 +135,9 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             href={item.href}
             onClick={(e) => {
               e.preventDefault();
-              handleLinkClick(item.href);
+              handleLinkClick(item.href, item.label);
             }}
-            className="group flex items-baseline justify-between py-2 border-b border-[#050505]/10 text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-[#050505] hover:translate-x-3 transition-transform duration-200"
+            className="group flex items-baseline justify-between py-2 border-b border-[#050505]/10 text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-[#050505] hover:translate-x-3 transition-transform duration-200 cursor-pointer"
           >
             <span>{item.label}</span>
             <span className="font-mono text-xs tracking-widest font-bold opacity-40 group-hover:opacity-100 transition-opacity">
@@ -159,9 +154,9 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             href="#contact"
             onClick={(e) => {
               e.preventDefault();
-              handleLinkClick('#contact');
+              handleLinkClick('#contact', "LET'S TALK");
             }}
-            className="inline-flex items-center gap-3 bg-[#050505] text-[#F7F7F5] px-8 py-4 font-mono text-xs font-black tracking-widest uppercase hover:bg-white hover:text-[#050505] transition-colors"
+            className="inline-flex items-center gap-3 bg-[#050505] text-[#F7F7F5] px-8 py-4 font-mono text-xs font-black tracking-widest uppercase hover:bg-white hover:text-[#050505] transition-colors cursor-pointer"
           >
             <span>LET&apos;S TALK</span>
             <Arrow diagonal />

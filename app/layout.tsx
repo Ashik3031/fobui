@@ -4,7 +4,7 @@ import './globals.css';
 import { constructMetadata } from '@/lib/seo';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { SmoothScroll } from '@/components/motion/SmoothScroll';
-import { PageTransitionProvider } from '@/components/motion/PageTransition';
+import { TransitionProvider } from '@/components/motion/TransitionProvider';
 import { Navbar } from '@/components/navigation/Navbar';
 import { Footer } from '@/components/footer/Footer';
 import { IntroLoader } from '@/components/intro/IntroLoader';
@@ -67,7 +67,7 @@ export default function RootLayout({
         <IntroLoader />
 
         {/* Global Page Transition and Smooth Scroll System */}
-        <PageTransitionProvider>
+        <TransitionProvider>
           <SmoothScroll>
             <div className="relative min-h-screen flex flex-col justify-between">
               <Navbar />
@@ -77,7 +77,7 @@ export default function RootLayout({
               <Footer />
             </div>
           </SmoothScroll>
-        </PageTransitionProvider>
+        </TransitionProvider>
       </body>
     </html>
   );

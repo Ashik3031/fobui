@@ -72,7 +72,7 @@ export function constructMetadata({
       },
     },
     icons: {
-      icon: '/favicon.ico',
+      icon: '/icon.png',
       apple: '/icon.png',
     },
   };

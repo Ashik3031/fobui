@@ -35,6 +35,9 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     });
 
     lenisRef.current = lenis;
+    if (typeof window !== 'undefined') {
+      (window as unknown as { __lenis?: Lenis | null }).__lenis = lenis;
+    }
 
     // Connect Lenis to ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
@@ -47,6 +50,9 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      if (typeof window !== 'undefined') {
+        (window as unknown as { __lenis?: Lenis | null }).__lenis = null;
+      }
       gsap.ticker.remove(updateTicker);
       lenis.destroy();
       lenisRef.current = null;

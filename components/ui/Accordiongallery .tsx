@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, MouseEvent } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import gsap from 'gsap';
 import { Arrow } from '@/components/ui/Arrow';
+import { useTransition } from '@/components/motion/TransitionProvider';
 
 export type AccordionItem = {
     id: string;
@@ -58,6 +58,7 @@ export function AccordionGallery({
     grayscale = true,
     className = '',
 }: Props) {
+    const transition = useTransition();
     const count = Math.max(items.length, 1);
     const rootRef = useRef<HTMLDivElement>(null);
     const panelRefs = useRef<(HTMLAnchorElement | null)[]>([]);
@@ -208,6 +209,9 @@ export function AccordionGallery({
         if (i !== active) {
             e.preventDefault();
             setActive(i);
+        } else {
+            e.preventDefault();
+            transition(items[i].href, items[i].title);
         }
     };
 
@@ -224,7 +228,7 @@ export function AccordionGallery({
             {items.map((item, i) => {
                 const isActive = i === active;
                 return (
-                    <Link
+                    <a
                         key={item.id}
                         href={item.href}
                         ref={(el) => {
@@ -349,7 +353,7 @@ export function AccordionGallery({
                                 </span>
                             </div>
                         </div>
-                    </Link>
+                    </a>
                 );
             })}
         </div>

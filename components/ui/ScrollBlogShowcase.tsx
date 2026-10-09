@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import { useTransition } from "@/components/motion/TransitionProvider";
 
 export type BlogPost = {
     slug: string;
@@ -97,6 +97,7 @@ export default function ScrollBlogShowcase({
     allBlogsHref = "/blogs",
     allBlogsLabel = "Read full blogs",
 }: Props) {
+    const transition = useTransition();
     const sectionRef = useRef<HTMLElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const targetRef = useRef(0);
@@ -402,14 +403,18 @@ export default function ScrollBlogShowcase({
                                 <p className="mb-8 max-w-[44ch] text-base leading-relaxed text-white/90">
                                     {post.excerpt}
                                 </p>
-                                <Link
+                                <a
                                     href={`/blog/${post.slug}`}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        transition(`/blog/${post.slug}`, post.title);
+                                    }}
                                     tabIndex={i === active ? 0 : -1}
-                                    className="inline-flex items-center gap-3 bg-[#FFD600] px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-black transition-colors [text-shadow:none] hover:bg-white focus-visible:bg-white focus-visible:outline-none"
+                                    className="inline-flex items-center gap-3 bg-[#FFD600] px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-black transition-colors [text-shadow:none] hover:bg-white focus-visible:bg-white focus-visible:outline-none cursor-pointer"
                                 >
                                     Read story
                                     <Arrow />
-                                </Link>
+                                </a>
                             </div>
                         ))}
                     </div>
@@ -417,13 +422,17 @@ export default function ScrollBlogShowcase({
                     <ol className="m-0 hidden list-none flex-col gap-2.5 border-t border-dotted border-[#FFD600]/50 p-0 pt-5 [text-shadow:0_1px_10px_rgba(0,0,0,0.4)] md:flex">
                         {posts.map((post, i) => (
                             <li key={post.slug}>
-                                <Link
+                                <a
                                     href={`/blog/${post.slug}`}
-                                    className={`block font-mono text-xs font-bold uppercase tracking-[0.18em] transition-all duration-300 hover:text-white ${i === active ? "pl-2 text-[#FFD600]" : "text-white/55"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        transition(`/blog/${post.slug}`, post.title);
+                                    }}
+                                    className={`block font-mono text-xs font-bold uppercase tracking-[0.18em] transition-all duration-300 hover:text-white cursor-pointer ${i === active ? "pl-2 text-[#FFD600]" : "text-white/55"
                                         }`}
                                 >
                                     {post.title}
-                                </Link>
+                                </a>
                             </li>
                         ))}
                     </ol>
@@ -438,13 +447,17 @@ export default function ScrollBlogShowcase({
                         pointerEvents: panel > 0.8 ? "auto" : "none",
                     }}
                 >
-                    <Link
+                    <a
                         href={allBlogsHref}
-                        className="inline-flex items-center gap-3 bg-[#FFD600] px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-black transition-all hover:bg-white focus-visible:bg-white focus-visible:outline-none shadow-[0_8px_30px_rgba(0,0,0,0.45)]"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            transition(allBlogsHref, allBlogsLabel);
+                        }}
+                        className="inline-flex items-center gap-3 bg-[#FFD600] px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-black transition-all hover:bg-white focus-visible:bg-white focus-visible:outline-none shadow-[0_8px_30px_rgba(0,0,0,0.45)] cursor-pointer"
                     >
                         <span>{allBlogsLabel}</span>
                         <Arrow />
-                    </Link>
+                    </a>
                 </div>
 
                 {p < 0.05 && (

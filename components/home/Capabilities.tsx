@@ -2,11 +2,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { SERVICES, Service } from '@/data/services';
 import { Arrow } from '@/components/ui/Arrow';
+import { useTransition } from '@/components/motion/TransitionProvider';
 
 export function Capabilities() {
+  const transition = useTransition();
   const [activeService, setActiveService] = useState<Service | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -92,12 +93,16 @@ export function Capabilities() {
                       <span className="font-mono text-sm xl:text-base font-black tracking-widest text-white/40 group-hover:text-[#050505] transition-colors duration-200 select-none">
                         {service.number}
                       </span>
-                      <Link
+                      <a
                         href={`/solutions/${service.slug}`}
-                        className="text-4xl xl:text-6xl font-black uppercase tracking-tight text-[#F7F7F5] group-hover:text-[#050505] focus:outline-none transition-colors duration-200"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          transition(`/solutions/${service.slug}`, service.title);
+                        }}
+                        className="text-4xl xl:text-6xl font-black uppercase tracking-tight text-[#F7F7F5] group-hover:text-[#050505] focus:outline-none transition-colors duration-200 cursor-pointer"
                       >
                         {service.title}
-                      </Link>
+                      </a>
                     </div>
 
                     {/* Expandable 2-line description on hover */}
@@ -114,9 +119,14 @@ export function Capabilities() {
                     <span className="font-mono text-xs tracking-widest uppercase text-white/70 group-hover:text-[#050505]/80 max-w-xs text-right hidden xl:block transition-colors duration-200">
                       {service.tagline}
                     </span>
-                    <div className="w-12 h-12 flex items-center justify-center border border-white/20 text-[#F7F7F5] group-hover:border-[#050505] group-hover:bg-[#050505] group-hover:text-[#FFD600] transition-all duration-300">
+                    <button
+                      type="button"
+                      onClick={() => transition(`/solutions/${service.slug}`, service.title)}
+                      className="w-12 h-12 flex items-center justify-center border border-white/20 text-[#F7F7F5] group-hover:border-[#050505] group-hover:bg-[#050505] group-hover:text-[#FFD600] transition-all duration-300 cursor-pointer"
+                      aria-label={`View ${service.title}`}
+                    >
                       <Arrow className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-                    </div>
+                    </button>
                   </div>
                 </div>
 
@@ -157,13 +167,17 @@ export function Capabilities() {
                           </span>
                         ))}
                       </div>
-                      <Link
+                      <a
                         href={`/solutions/${service.slug}`}
-                        className="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-widest uppercase text-[#FFD600] hover:text-white pt-2 transition-colors duration-200"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          transition(`/solutions/${service.slug}`, service.title);
+                        }}
+                        className="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-widest uppercase text-[#FFD600] hover:text-white pt-2 transition-colors duration-200 cursor-pointer"
                       >
                         <span>EXPLORE CAPABILITY</span>
                         <Arrow diagonal className="w-3.5 h-3.5" />
-                      </Link>
+                      </a>
                     </div>
                   )}
                 </div>
