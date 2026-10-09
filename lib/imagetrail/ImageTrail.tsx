@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import './ImageTrail.css';
 
@@ -98,6 +98,7 @@ function makeVariantBase(container: HTMLDivElement) {
 
 class ImageTrailVariant1 {
   container: HTMLDivElement;
+  listenEl: HTMLElement;
   rafId: number | null = null;
   destroyed = false;
   images: ImageItem[];
@@ -113,8 +114,9 @@ class ImageTrailVariant1 {
   handlePointerMove: (e: MouseEvent | TouchEvent) => void;
   initRender: (e: MouseEvent | TouchEvent) => void;
 
-  constructor(container: HTMLDivElement) {
+  constructor(container: HTMLDivElement, listenEl?: HTMLElement) {
     this.container = container;
+    this.listenEl = listenEl ?? container;
     this.images = [...container.querySelectorAll<HTMLDivElement>('.content__img')].map(
       (el) => new ImageItem(el)
     );
@@ -124,19 +126,19 @@ class ImageTrailVariant1 {
       const rect = this.container.getBoundingClientRect();
       this.mousePos = getLocalPointerPos(ev, rect);
     };
-    container.addEventListener('mousemove', this.handlePointerMove);
-    container.addEventListener('touchmove', this.handlePointerMove);
+    this.listenEl.addEventListener('mousemove', this.handlePointerMove);
+    this.listenEl.addEventListener('touchmove', this.handlePointerMove);
 
     this.initRender = (ev) => {
       const rect = this.container.getBoundingClientRect();
       this.mousePos = getLocalPointerPos(ev, rect);
       this.cacheMousePos = { ...this.mousePos };
       this.rafId = requestAnimationFrame(() => this.render());
-      container.removeEventListener('mousemove', this.initRender);
-      container.removeEventListener('touchmove', this.initRender);
+      this.listenEl.removeEventListener('mousemove', this.initRender);
+      this.listenEl.removeEventListener('touchmove', this.initRender);
     };
-    container.addEventListener('mousemove', this.initRender);
-    container.addEventListener('touchmove', this.initRender);
+    this.listenEl.addEventListener('mousemove', this.initRender);
+    this.listenEl.addEventListener('touchmove', this.initRender);
   }
 
   render() {
@@ -177,7 +179,7 @@ class ImageTrailVariant1 {
         },
         0
       )
-      .to(img.DOM.el, { duration: 0.4, ease: 'power3', opacity: 0, scale: 0.2 }, 0.4);
+      .to(img.DOM.el, { duration: 1.2, ease: 'power3', opacity: 0, scale: 0.2 }, 0.4);
   }
 
   onImageActivated() { this.activeImagesCount++; this.isIdle = false; }
@@ -189,10 +191,10 @@ class ImageTrailVariant1 {
   destroy() {
     this.destroyed = true;
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
-    this.container.removeEventListener('mousemove', this.handlePointerMove);
-    this.container.removeEventListener('touchmove', this.handlePointerMove);
-    this.container.removeEventListener('mousemove', this.initRender);
-    this.container.removeEventListener('touchmove', this.initRender);
+    this.listenEl.removeEventListener('mousemove', this.handlePointerMove);
+    this.listenEl.removeEventListener('touchmove', this.handlePointerMove);
+    this.listenEl.removeEventListener('mousemove', this.initRender);
+    this.listenEl.removeEventListener('touchmove', this.initRender);
     this.images.forEach((img) => { gsap.killTweensOf(img.DOM.el); img.destroy(); });
   }
 }
@@ -203,6 +205,7 @@ class ImageTrailVariant1 {
 
 class ImageTrailVariant5 {
   container: HTMLDivElement;
+  listenEl: HTMLElement;
   rafId: number | null = null;
   destroyed = false;
   images: ImageItem[];
@@ -219,8 +222,9 @@ class ImageTrailVariant5 {
   handlePointerMove: (e: MouseEvent | TouchEvent) => void;
   initRender: (e: MouseEvent | TouchEvent) => void;
 
-  constructor(container: HTMLDivElement) {
+  constructor(container: HTMLDivElement, listenEl?: HTMLElement) {
     this.container = container;
+    this.listenEl = listenEl ?? container;
     this.images = [...container.querySelectorAll<HTMLDivElement>('.content__img')].map(
       (el) => new ImageItem(el)
     );
@@ -230,19 +234,19 @@ class ImageTrailVariant5 {
       const rect = container.getBoundingClientRect();
       this.mousePos = getLocalPointerPos(ev, rect);
     };
-    container.addEventListener('mousemove', this.handlePointerMove);
-    container.addEventListener('touchmove', this.handlePointerMove);
+    this.listenEl.addEventListener('mousemove', this.handlePointerMove);
+    this.listenEl.addEventListener('touchmove', this.handlePointerMove);
 
     this.initRender = (ev) => {
       const rect = container.getBoundingClientRect();
       this.mousePos = getLocalPointerPos(ev, rect);
       this.cacheMousePos = { ...this.mousePos };
       this.rafId = requestAnimationFrame(() => this.render());
-      container.removeEventListener('mousemove', this.initRender);
-      container.removeEventListener('touchmove', this.initRender);
+      this.listenEl.removeEventListener('mousemove', this.initRender);
+      this.listenEl.removeEventListener('touchmove', this.initRender);
     };
-    container.addEventListener('mousemove', this.initRender);
-    container.addEventListener('touchmove', this.initRender);
+    this.listenEl.addEventListener('mousemove', this.initRender);
+    this.listenEl.addEventListener('touchmove', this.initRender);
   }
 
   render() {
@@ -266,7 +270,7 @@ class ImageTrailVariant5 {
     if (angle > 90 && angle <= 270) angle += 180;
     const isMovingClockwise = angle >= this.lastAngle;
     this.lastAngle = angle;
-    const startAngle = isMovingClockwise ? angle - 10 : angle + 10;
+    const startAngle = isMovingClockwise ? angle - 3 : angle + 3;
     const distance = Math.sqrt(dx * dx + dy * dy);
     if (distance !== 0) { dx /= distance; dy /= distance; }
     dx *= distance / 150;
@@ -301,7 +305,7 @@ class ImageTrailVariant5 {
         },
         0
       )
-      .to(img.DOM.el, { duration: 0.4, ease: 'expo', opacity: 0 }, 0.5)
+      .to(img.DOM.el, { duration: 1.2, ease: 'expo', opacity: 0 }, 0.5)
       .to(img.DOM.el, { duration: 1.5, ease: 'power4', x: `+=${dx * 120}`, y: `+=${dy * 120}` }, 0.05);
   }
 
@@ -314,10 +318,10 @@ class ImageTrailVariant5 {
   destroy() {
     this.destroyed = true;
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
-    this.container.removeEventListener('mousemove', this.handlePointerMove);
-    this.container.removeEventListener('touchmove', this.handlePointerMove);
-    this.container.removeEventListener('mousemove', this.initRender);
-    this.container.removeEventListener('touchmove', this.initRender);
+    this.listenEl.removeEventListener('mousemove', this.handlePointerMove);
+    this.listenEl.removeEventListener('touchmove', this.handlePointerMove);
+    this.listenEl.removeEventListener('mousemove', this.initRender);
+    this.listenEl.removeEventListener('touchmove', this.initRender);
     this.images.forEach((img) => { gsap.killTweensOf(img.DOM.el); img.destroy(); });
   }
 }
@@ -327,7 +331,7 @@ class ImageTrailVariant5 {
 ------------------------------------------------------- */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const variantMap: Record<number, new (container: HTMLDivElement) => any> = {
+const variantMap: Record<number, new (container: HTMLDivElement, listenEl?: HTMLElement) => any> = {
   1: ImageTrailVariant1,
   5: ImageTrailVariant5,
 };
@@ -339,17 +343,18 @@ const variantMap: Record<number, new (container: HTMLDivElement) => any> = {
 type ImageTrailProps = {
   items?: string[];
   variant?: number;
+  listenRef?: React.RefObject<HTMLElement | null>;
 };
 
-export default function ImageTrail({ items = [], variant = 5 }: ImageTrailProps) {
+export default function ImageTrail({ items = [], variant = 5, listenRef }: ImageTrailProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
     const Cls = variantMap[variant] ?? ImageTrailVariant5;
-    const instance = new Cls(containerRef.current);
+    const instance = new Cls(containerRef.current, listenRef?.current ?? undefined);
     return () => instance.destroy();
-  }, [variant, items]);
+  }, [variant, items, listenRef]);
 
   return (
     <div

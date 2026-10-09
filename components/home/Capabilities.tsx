@@ -188,30 +188,42 @@ export function Capabilities() {
       </div>
 
       {/* Desktop Floating Cursor Image Preview */}
-      {!isMobile && activeService && (
+      <style>{`
+        @keyframes slideUpIn {
+          from { transform: translateY(100%); opacity: 0.6; }
+          to   { transform: translateY(0%);   opacity: 1; }
+        }
+        .cap-slide-up {
+          animation: slideUpIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+      `}</style>
+
+      {!isMobile && (
         <div
-          className="fixed pointer-events-none z-40 w-80 h-52 bg-[#050505] border border-white/15 overflow-hidden shadow-2xl transform-gpu transition-opacity duration-200"
+          className="fixed pointer-events-none z-40 w-80 h-52 bg-[#050505] overflow-hidden shadow-2xl transform-gpu transition-opacity duration-200"
           style={{
             left: `${mousePos.x + 28}px`,
             top: `${mousePos.y - 100}px`,
             opacity: activeService ? 1 : 0,
           }}
         >
-          <div className="relative w-full h-full bg-[#111]">
-            <Image
-              src={activeService.image}
-              alt={activeService.title}
-              fill
-              sizes="320px"
-              className="object-cover"
-              unoptimized
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10" />
-            <div className="absolute bottom-3 left-3 right-3 bg-[#050505]/85 backdrop-blur-sm px-3 py-2 font-mono text-[10px] tracking-widest uppercase text-[#fed604] flex justify-between items-center">
-              <span className="font-bold">{activeService.number}</span>
-              <span className="truncate max-w-[200px]">{activeService.title}</span>
+          {activeService && (
+            <div key={activeService.id} className="relative w-full h-full cap-slide-up">
+              <Image
+                src={activeService.image}
+                alt={activeService.title}
+                fill
+                sizes="320px"
+                className="object-cover"
+                unoptimized
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10" />
+              <div className="absolute bottom-3 left-3 right-3 bg-[#050505]/85 backdrop-blur-sm px-3 py-2 font-mono text-[10px] tracking-widest uppercase text-[#fed604] flex justify-between items-center">
+                <span className="font-bold">{activeService.number}</span>
+                <span className="truncate max-w-[200px]">{activeService.title}</span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </section>

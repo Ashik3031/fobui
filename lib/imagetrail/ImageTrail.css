@@ -11,14 +11,14 @@
     top: 0;
     left: 0;
 
-    width: 190px;
+    width: 130px;
     aspect-ratio: 1.1;
 
     opacity: 0;
 
     overflow: hidden;
 
-    border-radius: 15px;
+    border-radius: 6px;
 
     pointer-events: none;
 
