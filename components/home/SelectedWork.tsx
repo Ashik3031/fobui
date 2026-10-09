@@ -28,6 +28,8 @@ export function SelectedWork() {
   const transition = useTransition();
   const sectionRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0); // 0 → 1 across the whole section
+  const [scrollDir, setScrollDir] = useState<'down' | 'up'>('down');
+  const prevProgressRef = useRef(0);
   const count = items.length;
 
   // Scroll-linked progress
@@ -39,7 +41,12 @@ export function SelectedWork() {
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const range = rect.height - window.innerHeight;
-      setProgress(range > 0 ? clamp(-rect.top / range) : 0);
+      const newProgress = range > 0 ? clamp(-rect.top / range) : 0;
+      if (newProgress !== prevProgressRef.current) {
+        setScrollDir(newProgress > prevProgressRef.current ? 'down' : 'up');
+        prevProgressRef.current = newProgress;
+      }
+      setProgress(newProgress);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -160,21 +167,31 @@ export function SelectedWork() {
         </div>
 
         {/* Side image */}
-        <div className="relative mb-5 h-[24svh] sm:h-[28svh] w-full md:absolute md:right-[-4vw] lg:right-[-2vw] xl:right-0 md:top-1/2 md:mb-0 md:h-auto md:aspect-[4/5] md:w-[28vw] md:max-w-[460px] md:-translate-y-1/2">
-          {items.map((item, i) => (
-            <img
-              key={item.id}
-              src={typeof item.image === 'string' ? item.image : (item.image as { src: string }).src}
-              alt={i === active ? item.alt : ''}
-              loading={i === active ? 'eager' : 'lazy'}
-              className="absolute inset-0 h-full w-full rounded-[22px] sm:rounded-[26px] object-cover shadow-[0_20px_50px_-15px_rgba(0,0,0,0.18)] border border-[#050505]/10"
-              style={{
-                opacity: i === active ? 1 : 0,
-                transform: i === active ? 'scale(1)' : 'scale(0.96)',
-                transition: `opacity 700ms ${EASE}, transform 900ms ${EASE}`,
-              }}
-            />
-          ))}
+        <div className="relative mb-5 h-[24svh] sm:h-[28svh] w-full md:absolute md:right-[-4vw] lg:right-[-2vw] xl:right-0 md:top-1/2 md:mb-0 md:h-auto md:aspect-[4/5] md:w-[28vw] md:max-w-[460px] md:-translate-y-1/2" style={{ perspective: '1200px' }}>
+          {items.map((item, i) => {
+            const isActive = i === active;
+            const isPast  = i < active;
+            return (
+              <img
+                key={item.id}
+                src={typeof item.image === 'string' ? item.image : (item.image as { src: string }).src}
+                alt={isActive ? item.alt : ''}
+                loading={isActive ? 'eager' : 'lazy'}
+                className="absolute inset-0 h-full w-full rounded-tl-[22px] rounded-bl-[22px] sm:rounded-tl-[26px] sm:rounded-bl-[26px] rounded-tr-none rounded-br-none object-cover shadow-[0_20px_50px_-15px_rgba(0,0,0,0.18)] border border-[#050505]/10"
+                style={{
+                  transformOrigin: 'right center',
+                  transform: isActive
+                    ? 'rotateY(0deg)'
+                    : isPast
+                      ? (scrollDir === 'down' ? 'rotateY(-90deg)' : 'rotateY(90deg)')
+                      : (scrollDir === 'down' ? 'rotateY(90deg)'  : 'rotateY(-90deg)'),
+                  transition: `transform 700ms ${EASE}`,
+                  backfaceVisibility: 'hidden',
+                  opacity: isActive ? 1 : 0,
+                }}
+              />
+            );
+          })}
         </div>
 
         {/* Center details: block centered on the page, text left-aligned inside it */}
