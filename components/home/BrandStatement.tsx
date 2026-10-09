@@ -58,8 +58,8 @@ const TRAIL_IMAGES = [
   'https://res.cloudinary.com/dugtxybef/image/upload/v1791540023/Gemini_Generated_Image_r5x8vcr5x8vcr5x8_y67yny.png',
   'https://res.cloudinary.com/dugtxybef/image/upload/v1791540023/3D_Branding_Design_Studio_Composition_yctxi2.png',
   'https://res.cloudinary.com/dugtxybef/image/upload/v1791540023/Glossy_3D_Social_Media_Megaphone_zgyndt.png',
-  'https://picsum.photos/id/1029/300/300',
-  'https://picsum.photos/id/1030/300/300',
+  'https://res.cloudinary.com/dugtxybef/image/upload/v1791540825/Glossy_3D_Next.js_Badge_rrxizk.png',
+  'https://res.cloudinary.com/dugtxybef/image/upload/v1791540023/Polished_3D_Google_G_Logo_2_z3xdfv.png',
 ];
 
 export function BrandStatement() {
